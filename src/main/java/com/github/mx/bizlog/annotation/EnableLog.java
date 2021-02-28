@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@EnableProfiler
+@EnableProfiler(expression = "")
 @Import(LogConfigureSelector.class)
 public @interface EnableLog {
 
