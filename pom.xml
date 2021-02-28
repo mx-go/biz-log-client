@@ -19,10 +19,17 @@
     <properties>
         <nacos-config-core.version>1.0.3</nacos-config-core.version>
         <lombok.version>1.18.12</lombok.version>
+        <fastjson.version>1.2.75</fastjson.version>
         <springframework.version>5.2.6.RELEASE</springframework.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.mx-go</groupId>
+            <artifactId>service-profiler</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>com.github.mx-go</groupId>
             <artifactId>nacos-config-core</artifactId>
@@ -53,6 +60,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
             <version>2.3.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 
