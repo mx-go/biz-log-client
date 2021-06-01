@@ -1,5 +1,6 @@
 package com.github.mx.bizlog.bean;
 
+import com.github.mx.nacos.config.core.ConfigFactory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Create by max on 2021/02/27
@@ -35,7 +36,24 @@ public class LogRecord {
     private String action;
 
     private String category;
-    private Date createTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private LocalDateTime createTime;
 
     private String content;
+
+    public LogRecord(String bizId, String content) {
+        this.appName = ConfigFactory.getApplicationName();
+        this.bizId = bizId;
+        this.content = content;
+        this.createTime = LocalDateTime.now();
+    }
+
+    public LogRecord(String bizId, String category, String content) {
+        this.appName = ConfigFactory.getApplicationName();
+        this.bizId = bizId;
+        this.category = category;
+        this.content = content;
+        this.createTime = LocalDateTime.now();
+    }
 }

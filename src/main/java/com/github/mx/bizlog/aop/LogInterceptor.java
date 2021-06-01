@@ -2,6 +2,7 @@ package com.github.mx.bizlog.aop;
 
 import com.github.mx.bizlog.bean.LogOps;
 import com.github.mx.bizlog.bean.LogRecord;
+import com.github.mx.bizlog.context.BizLog;
 import com.github.mx.bizlog.context.LogRecordContext;
 import com.github.mx.bizlog.extend.LogOperator;
 import com.github.mx.bizlog.extend.LogPersistence;
@@ -21,8 +22,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         logPersistence = beanFactory.getBean(LogPersistence.class);
         logOperator = beanFactory.getBean(LogOperator.class);
         Preconditions.checkNotNull(logPersistence, "logPersistence not null");
+        BizLog.setLogPersistence(logPersistence);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         boolean success = true;
         String errorMsg = "";
         Throwable throwable = null;
+        LocalDateTime startTime = LocalDateTime.now();
         try {
             LogRecordContext.clear();
             ret = invoker.proceed();
@@ -67,8 +70,9 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             errorMsg = e.getClass().getName();
             throwable = e;
         } finally {
+            LocalDateTime endTime = LocalDateTime.now();
             // 处理及记录日志
-            processLog(method, args, targetClass, ret, success, errorMsg);
+            processLog(method, args, targetClass, ret, success, errorMsg, startTime, endTime);
             LogRecordContext.clear();
         }
         if (throwable != null) {
@@ -81,11 +85,12 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         return AopProxyUtils.ultimateTargetClass(target);
     }
 
-    private void processLog(Method method, Object[] args, Class<?> targetClass, Object ret, boolean success, String errorMsg) {
+    private void processLog(Method method, Object[] args, Class<?> targetClass, Object ret, boolean success,
+                            String errorMsg, LocalDateTime startTime, LocalDateTime endTime) {
         try {
             Collection<LogOps> operations = getLogOperationSource().computeLogOperations(method, targetClass);
             if (!CollectionUtils.isEmpty(operations)) {
-                recordLog(ret, method, args, operations, targetClass, success, errorMsg);
+                recordLog(ret, method, args, operations, targetClass, success, errorMsg, startTime, endTime);
             }
         } catch (Exception e) {
             //记录日志错误不要影响业务
@@ -93,15 +98,15 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         }
     }
 
-    private void recordLog(Object ret, Method method, Object[] args, Collection<LogOps> operations,
-                           Class<?> targetClass, boolean success, String errorMsg) {
+    private void recordLog(Object ret, Method method, Object[] args, Collection<LogOps> operations, Class<?> targetClass,
+                           boolean success, String errorMsg, LocalDateTime startTime, LocalDateTime endTime) {
         for (LogOps logOps : operations) {
             try {
                 String action = success ? logOps.getSuccessLogTemplate() : logOps.getFailLogTemplate();
                 if (success || !StringUtils.isEmpty(action)) {
-                    LogRecord logRecord = this.wrapper(ret, method, args, targetClass, success, errorMsg, logOps, action);
+                    LogRecord logRecord = this.wrapper(ret, method, args, targetClass, success, errorMsg, logOps, action, startTime, endTime);
                     Preconditions.checkNotNull(logPersistence, "logPersistence not init!!");
-                    this.logPersistence.persist(logRecord);
+                    this.logPersistence.log(logRecord);
                 }
             } catch (Exception e) {
                 log.error("log record execute exception", e);
@@ -110,7 +115,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
     }
 
     private LogRecord wrapper(Object ret, Method method, Object[] args, Class<?> targetClass, boolean success,
-                              String errorMsg, LogOps logOps, String action) {
+                              String errorMsg, LogOps logOps, String action, LocalDateTime startTime, LocalDateTime endTime) {
         String bizId = logOps.getBizId();
         String operatorId = logOps.getOperatorId();
         String category = logOps.getCategory();
@@ -121,7 +126,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         if (StringUtils.isEmpty(operatorId)) {
             spElTemplates = Lists.newArrayList(bizId, action, category, content);
             if (StringUtils.isEmpty(logOperator.getOperatorId())) {
-                throw new IllegalArgumentException("operatorId is null");
+                log.warn("operatorId is null");
             }
             realOperator = logOperator.getOperatorId();
         } else {
@@ -137,7 +142,9 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 .content(expressionValues.get(content))
                 .success(success)
                 .action(expressionValues.get(action))
-                .createTime(new Date())
+                .startTime(startTime)
+                .endTime(endTime)
+                .createTime(LocalDateTime.now())
                 .build();
     }
 }

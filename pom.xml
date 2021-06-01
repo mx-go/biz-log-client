@@ -26,12 +26,6 @@
     <dependencies>
         <dependency>
             <groupId>com.github.mx-go</groupId>
-            <artifactId>service-profiler</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.mx-go</groupId>
             <artifactId>nacos-config-core</artifactId>
             <version>${nacos-config-core.version}</version>
         </dependency>
