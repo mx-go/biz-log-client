@@ -36,6 +36,11 @@ public class DefaultLogPersistence implements LogPersistence, Runnable, AutoClos
     }
 
     @Override
+    public void log(Collection<LogRecord> record) {
+        CURRENT.addAll(record);
+    }
+
+    @Override
     public <T, R> void log(T bizId, R content) {
         LogRecord record = new LogRecord(String.valueOf(bizId), JSON.toJSONString(content));
         CURRENT.add(record);

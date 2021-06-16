@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * <p>
  * Create by max on 2021/02/27
  **/
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
@@ -18,12 +18,22 @@ public @interface Log {
     /**
      * 业务主键
      */
-    String bizId();
+    String bizId() default "";
+
+    /**
+     * 日志类型
+     */
+    String logType() default "";
+
+    /**
+     * 分类
+     */
+    String category() default "";
 
     /**
      * 成功时信息
      */
-    String success();
+    String success() default "";
 
     /**
      * 失败时信息
@@ -34,11 +44,6 @@ public @interface Log {
      * 操作人
      */
     String operatorId() default DefaultLogOperator.DEFAULT_OPERATOR_ID;
-
-    /**
-     * 分类
-     */
-    String category() default "";
 
     /**
      * 自定义信息

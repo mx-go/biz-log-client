@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LogOps {
+    private String logType;
     private String bizId;
     private String successLogTemplate;
     private String failLogTemplate;

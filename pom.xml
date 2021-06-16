@@ -11,7 +11,7 @@
 
     <groupId>com.github.mx-go</groupId>
     <artifactId>biz-log-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <name>biz-log-client</name>
     <packaging>jar</packaging>
@@ -21,6 +21,7 @@
         <lombok.version>1.18.12</lombok.version>
         <fastjson.version>1.2.75</fastjson.version>
         <springframework.version>5.2.6.RELEASE</springframework.version>
+        <yauaa.version>5.23</yauaa.version>
     </properties>
 
     <dependencies>
@@ -59,6 +60,23 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.basjes.parse.useragent</groupId>
+            <artifactId>yauaa</artifactId>
+            <version>${yauaa.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

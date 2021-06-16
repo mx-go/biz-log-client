@@ -6,6 +6,7 @@ import com.github.mx.bizlog.context.BizLog;
 import com.github.mx.bizlog.context.LogRecordContext;
 import com.github.mx.bizlog.extend.LogOperator;
 import com.github.mx.bizlog.extend.LogPersistence;
+import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
 import com.github.mx.bizlog.parser.LogValueParser;
 import com.github.mx.nacos.config.core.ConfigFactory;
 import com.google.common.base.Preconditions;
@@ -63,7 +64,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         Throwable throwable = null;
         LocalDateTime startTime = LocalDateTime.now();
         try {
-            LogRecordContext.clear();
+            LogRecordContext.putEmptySpan();
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
@@ -103,7 +104,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         for (LogOps logOps : operations) {
             try {
                 String action = success ? logOps.getSuccessLogTemplate() : logOps.getFailLogTemplate();
-                if (success || !StringUtils.isEmpty(action)) {
+                if (!StringUtils.isEmpty(logOps.getLogType())) {
                     LogRecord logRecord = this.wrapper(ret, method, args, targetClass, success, errorMsg, logOps, action, startTime, endTime);
                     Preconditions.checkNotNull(logPersistence, "logPersistence not init!!");
                     this.logPersistence.log(logRecord);
@@ -117,13 +118,14 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
     private LogRecord wrapper(Object ret, Method method, Object[] args, Class<?> targetClass, boolean success,
                               String errorMsg, LogOps logOps, String action, LocalDateTime startTime, LocalDateTime endTime) {
         String bizId = logOps.getBizId();
+        String logType = logOps.getLogType();
         String operatorId = logOps.getOperatorId();
         String category = logOps.getCategory();
         String content = logOps.getContent();
         //获取需要解析的表达式
         List<String> spElTemplates;
         String realOperator = "";
-        if (StringUtils.isEmpty(operatorId)) {
+        if (StringUtils.isEmpty(operatorId) || DefaultLogOperator.DEFAULT_OPERATOR_ID.equalsIgnoreCase(operatorId)) {
             spElTemplates = Lists.newArrayList(bizId, action, category, content);
             if (StringUtils.isEmpty(logOperator.getOperatorId())) {
                 log.warn("operatorId is null");
@@ -136,6 +138,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
 
         return LogRecord.builder()
                 .appName(ConfigFactory.getApplicationName())
+                .logType(logType)
                 .bizId(expressionValues.get(bizId))
                 .operatorId(!StringUtils.isEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
                 .category(expressionValues.get(category))

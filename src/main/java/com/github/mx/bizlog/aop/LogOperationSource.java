@@ -2,10 +2,10 @@ package com.github.mx.bizlog.aop;
 
 import com.github.mx.bizlog.annotation.Log;
 import com.github.mx.bizlog.bean.LogOps;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -53,6 +53,7 @@ public class LogOperationSource {
         LogOps logOps = LogOps.builder()
                 .successLogTemplate(logAnnotation.success())
                 .failLogTemplate(logAnnotation.fail())
+                .logType(logAnnotation.logType())
                 .bizId(logAnnotation.bizId())
                 .operatorId(logAnnotation.operatorId())
                 .category(logAnnotation.category())
@@ -63,9 +64,13 @@ public class LogOperationSource {
     }
 
     private void validateLogOperation(AnnotatedElement ae, LogOps logOps) {
-        if (!StringUtils.hasText(logOps.getSuccessLogTemplate()) && !StringUtils.hasText(logOps.getFailLogTemplate())) {
+        /*if (!StringUtils.hasText(logOps.getSuccessLogTemplate()) && !StringUtils.hasText(logOps.getFailLogTemplate())) {
             throw new IllegalStateException("Invalid log annotation configuration on '" +
                     ae.toString() + "'. 'one of successTemplate and failLogTemplate' attribute must be set.");
+        }*/
+        if (StringUtils.isAnyBlank(logOps.getLogType())) {
+            throw new IllegalStateException("Invalid log annotation configuration on '" +
+                    ae.toString() + "'. 'logType' attribute must be set.");
         }
     }
 }

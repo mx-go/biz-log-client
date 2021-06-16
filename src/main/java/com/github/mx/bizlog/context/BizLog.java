@@ -35,4 +35,8 @@ public class BizLog {
     public static void log(LogRecord record) {
         logPersistence.log(record);
     }
+
+    public static void log(Collection<LogRecord> records) {
+        logPersistence.log(records);
+    }
 }

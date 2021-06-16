@@ -19,27 +19,47 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class LogRecord {
 
+    /**
+     * 应用名称
+     */
     private String appName;
-
+    /**
+     * 日志类型
+     */
+    private String logType;
+    /**
+     * 分类
+     */
+    private String category;
+    /**
+     * 业务ID
+     */
     @NotBlank(message = "bizId required")
     @Length(max = 200, message = "bizId max length is 200")
     private String bizId;
-
+    /**
+     * 操作人ID
+     */
     @NotBlank(message = "operatorId required")
     @Length(max = 63, message = "operatorId max length is 63")
     private String operatorId;
-
+    /**
+     * 是否成功
+     */
     private Boolean success;
-
+    /**
+     * 具体动作
+     */
     @NotBlank(message = "opAction required")
     @Length(max = 511, message = "opAction max length is 511")
     private String action;
 
-    private String category;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private LocalDateTime createTime;
-
+    /**
+     * 描述
+     */
     private String content;
 
     public LogRecord(String bizId, String content) {

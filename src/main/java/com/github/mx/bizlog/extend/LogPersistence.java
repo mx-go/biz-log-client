@@ -16,7 +16,12 @@ public interface LogPersistence {
 
     void log(LogRecord record);
 
-    <T, R> void log(T bizId, R content);
+    default void log(Collection<LogRecord> records) {
+    }
 
-    <T, R> void log(Collection<T> bizIds, R content);
+    default <T, R> void log(T bizId, R content) {
+    }
+
+    default <T, R> void log(Collection<T> bizIds, R content) {
+    }
 }
