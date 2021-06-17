@@ -25,7 +25,7 @@ public @interface Log {
      * 日志类型
      * 如操作日志、业务日志
      */
-    String logType() default "";
+    String logType();
 
     /**
      * 分类

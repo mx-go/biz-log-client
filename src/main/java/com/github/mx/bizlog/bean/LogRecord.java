@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -34,13 +33,11 @@ public class LogRecord {
     /**
      * 业务ID
      */
-    @NotBlank(message = "bizId required")
     @Length(max = 200, message = "bizId max length is 200")
     private String bizId;
     /**
      * 操作人ID
      */
-    @NotBlank(message = "operatorId required")
     @Length(max = 63, message = "operatorId max length is 63")
     private String operatorId;
     /**
@@ -50,7 +47,6 @@ public class LogRecord {
     /**
      * 具体动作
      */
-    @NotBlank(message = "opAction required")
     @Length(max = 511, message = "opAction max length is 511")
     private String action;
 

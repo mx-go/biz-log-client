@@ -54,6 +54,5 @@ public class LogContext {
             variableMapStack.set(stack);
         }
         variableMapStack.get().push(Maps.newHashMap());
-
     }
 }

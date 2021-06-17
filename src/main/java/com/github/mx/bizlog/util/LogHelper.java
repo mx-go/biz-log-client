@@ -16,7 +16,7 @@ import java.util.Enumeration;
  * 字符串工具类
  */
 @Slf4j
-public class StringUtils {
+public class LogHelper {
 
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
