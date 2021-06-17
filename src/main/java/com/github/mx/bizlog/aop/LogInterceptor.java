@@ -3,7 +3,7 @@ package com.github.mx.bizlog.aop;
 import com.github.mx.bizlog.bean.LogOps;
 import com.github.mx.bizlog.bean.LogRecord;
 import com.github.mx.bizlog.context.BizLog;
-import com.github.mx.bizlog.context.LogRecordContext;
+import com.github.mx.bizlog.context.LogContext;
 import com.github.mx.bizlog.extend.LogOperator;
 import com.github.mx.bizlog.extend.LogPersistence;
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
@@ -64,7 +64,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         Throwable throwable = null;
         LocalDateTime startTime = LocalDateTime.now();
         try {
-            LogRecordContext.putEmptySpan();
+            LogContext.putEmptySpan();
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
@@ -74,7 +74,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             LocalDateTime endTime = LocalDateTime.now();
             // 处理及记录日志
             processLog(method, args, targetClass, ret, success, errorMsg, startTime, endTime);
-            LogRecordContext.clear();
+            LogContext.clear();
         }
         if (throwable != null) {
             throw throwable;

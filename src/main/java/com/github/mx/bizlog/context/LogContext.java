@@ -11,7 +11,7 @@ import java.util.Stack;
  * <p>
  * Create by max on 2021/02/27
  **/
-public class LogRecordContext {
+public class LogContext {
 
     private static final InheritableThreadLocal<Stack<Map<String, Object>>> variableMapStack = new InheritableThreadLocal<>();
 

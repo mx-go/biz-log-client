@@ -17,11 +17,13 @@ public @interface Log {
 
     /**
      * 业务主键
+     * 如订单ID
      */
     String bizId() default "";
 
     /**
      * 日志类型
+     * 如操作日志、业务日志
      */
     String logType() default "";
 

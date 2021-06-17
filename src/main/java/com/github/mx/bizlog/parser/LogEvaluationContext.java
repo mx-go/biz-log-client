@@ -1,6 +1,6 @@
 package com.github.mx.bizlog.parser;
 
-import com.github.mx.bizlog.context.LogRecordContext;
+import com.github.mx.bizlog.context.LogContext;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.ParameterNameDiscoverer;
 
@@ -16,7 +16,7 @@ public class LogEvaluationContext extends MethodBasedEvaluationContext {
                                 ParameterNameDiscoverer parameterNameDiscoverer, Object ret, String errorMsg) {
         super(rootObject, method, arguments, parameterNameDiscoverer);
 
-        Map<String, Object> variables = LogRecordContext.getVariables();
+        Map<String, Object> variables = LogContext.getVariables();
         if (variables != null && variables.size() > 0) {
             for (Map.Entry<String, Object> entry : variables.entrySet()) {
                 setVariable(entry.getKey(), entry.getValue());

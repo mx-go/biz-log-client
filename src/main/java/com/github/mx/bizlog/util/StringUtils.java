@@ -1,9 +1,8 @@
 package com.github.mx.bizlog.util;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.basjes.parse.useragent.UserAgent;
 import nl.basjes.parse.useragent.UserAgentAnalyzer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -16,9 +15,9 @@ import java.util.Enumeration;
 /**
  * 字符串工具类
  */
+@Slf4j
 public class StringUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(StringUtils.class);
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
 
@@ -166,8 +165,6 @@ public class StringUtils {
 
     /**
      * 获取当前机器的IP
-     *
-     * @return /
      */
     public static String getLocalIp() {
         try {
