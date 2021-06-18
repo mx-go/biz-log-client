@@ -44,7 +44,7 @@ public class LogValueParser implements BeanFactoryAware {
                     AnnotatedElementKey annotatedElementKey = new AnnotatedElementKey(method, targetClass);
                     String value = expressionEvaluator.parseExpression(expression, annotatedElementKey, evaluationContext);
                     String functionName = matcher.group(1);
-                    matcher.appendReplacement(parsedStr, Strings.nullToEmpty(ParseFunctionFactory.apply(functionName, value)));
+                    matcher.appendReplacement(parsedStr, Matcher.quoteReplacement(Strings.nullToEmpty(ParseFunctionFactory.apply(functionName, value))));
                 }
                 matcher.appendTail(parsedStr);
                 expressionValues.put(expressionTemplate, parsedStr.toString());

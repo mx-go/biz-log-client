@@ -1,5 +1,6 @@
 package com.github.mx.bizlog.context;
 
+import com.alibaba.fastjson.JSON;
 import com.github.mx.bizlog.bean.LogRecord;
 import com.github.mx.bizlog.extend.LogPersistence;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +26,11 @@ public class BizLog {
             log.warn("bizId cant be null. Please check your parameter. content:{}", content);
             return;
         }
-        logPersistence.log(bizId, content);
+        logPersistence.log(new LogRecord(String.valueOf(bizId), JSON.toJSONString(content)));
     }
 
     public static <T, R> void log(Collection<T> bizIds, R content) {
-        logPersistence.log(bizIds, content);
+        bizIds.forEach(bizId -> logPersistence.log(new LogRecord(String.valueOf(bizId), JSON.toJSONString(content))));
     }
 
     public static void log(LogRecord record) {
@@ -37,6 +38,6 @@ public class BizLog {
     }
 
     public static void log(Collection<LogRecord> records) {
-        logPersistence.log(records);
+        records.forEach(logRecord -> logPersistence.log(records));
     }
 }

@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
@@ -68,7 +69,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
-            errorMsg = e.getClass().getName();
+            errorMsg = ExceptionUtils.getStackTrace(e);
             throwable = e;
         } finally {
             LocalDateTime endTime = LocalDateTime.now();
