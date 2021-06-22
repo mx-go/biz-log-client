@@ -31,9 +31,11 @@ import java.util.List;
 @Slf4j
 public class LogProxyAutoConfiguration implements ImportAware {
 
+    private AnnotationAttributes enableLogAnnotation;
+
     @Override
     public void setImportMetadata(AnnotationMetadata importMetadata) {
-        AnnotationAttributes enableLogAnnotation = AnnotationAttributes.fromMap(
+        enableLogAnnotation = AnnotationAttributes.fromMap(
                 importMetadata.getAnnotationAttributes(EnableLog.class.getName(), false));
         if (enableLogAnnotation == null) {
             log.info("@EnableLog is not present on importing class");
@@ -63,6 +65,7 @@ public class LogProxyAutoConfiguration implements ImportAware {
         BeanFactoryLogAdvisor advisor = new BeanFactoryLogAdvisor();
         advisor.setLogOperationSource(logOperationSource());
         advisor.setAdvice(logInterceptor());
+        advisor.setOrder(enableLogAnnotation.getNumber("order"));
         return advisor;
     }
 

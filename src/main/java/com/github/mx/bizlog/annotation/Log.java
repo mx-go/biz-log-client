@@ -43,6 +43,11 @@ public @interface Log {
     String fail() default "";
 
     /**
+     * 详情
+     */
+    String detail() default "";
+
+    /**
      * 操作人
      */
     String operatorId() default DefaultLogOperator.DEFAULT_OPERATOR_ID;

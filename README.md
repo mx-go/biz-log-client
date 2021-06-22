@@ -8,7 +8,7 @@
 
 ### 基本使用
 
-#### maven依赖添加SDK依赖
+#### maven添加依赖
 
 ```xml
 <dependency>
@@ -35,8 +35,8 @@ public class ProviderApplication {
 
 ###### 1. 普通的记录日志
 
-- **bizId**：就是业务的 ID，比如订单ID，查询的时候可以根据 bizNo 查询和它相关的操作日志
-- success：方法调用成功后把 success 记录在日志的内容中
+- bizId：业务ID，比如订单ID，查询的时候可以根据bizId查询和它相关的操作日志
+- success：方法调用成功后把success记录在日志的内容中
 - SpEL 表达式：其中用双大括号包围起来的（例如：`{{#order.purchaseName}}）``#order.purchaseName` 是 SpEL表达式。Spring中支持的它都支持。比如调用静态方法，三目表达式。SpEL 可以使用方法中的任何参数。
 
 ```java
@@ -50,11 +50,11 @@ public class ProviderApplication {
 
 此时会打印操作日志 "张三下了一个订单,购买商品「超值优惠红烧肉套餐」,下单结果:true"
 
-###### 2. 期望记录失败的日志, 如果抛出异常则记录fail的日志，没有抛出记录 `success` 的日志
+###### 2. 期望记录失败的日志, 如果抛出异常则记录fail的日志，没有则抛出记录 `success` 的日志
 
 ```java
-    @Log(logType = "BIZ-LOG", bizNo = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
+    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
+        success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
     public boolean createOrder(Order order) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -66,7 +66,8 @@ public class ProviderApplication {
 
 ###### 3. 日志支持种类
 
-比如一个订单的操作日志，有些操作日志是用户自己操作的，有些操作是系统运营人员做了修改产生的操作日志，我们系统不希望把运营的操作日志暴露给用户看到， 但是运营期望可以看到用户的日志以及运营自己操作的日志，这些操作日志的bizId都是订单号，所以为了扩展添加了类型字段，主要是为了对日志做分类，查询方便，支持更多的业务。
+比如一个订单的操作日志，有些操作日志是用户自己操作的，有些操作是系统运营人员做了修改产生的操作日志，系统不希望把运营的操作日志暴露给用户看到，
+但是运营期望可以看到用户的日志以及运营自己操作的日志，这些操作日志的bizId都是订单号，所以为了扩展添加了类型字段，主要是为了对日志做分类，查询方便，支持更多的业务。
 
 ```java
      @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」", category = "MANAGER",
@@ -80,12 +81,13 @@ public class ProviderApplication {
 
 ###### 4. 支持记录操作的详情或者额外信息
 
-如果一个操作修改了很多字段，但是success的日志模版里面防止过长不能把修改详情全部展示出来，这时候需要把修改的详情保存到`content`字段， `content`是一个 String ，需要自己序列化。这里的 `#order.toString()` 是调用了 Order 的 toString() 方法。 如果保存 JSON，重写一下 Order 的 toString() 方法即可。
+如果一个操作修改了很多字段，但是success的日志模版里面防止过长不能把修改详情全部展示出来，这时候需要把修改的详情保存到`detail`字段， `detail`是一个 String ，需要自己序列化。这里的 `#order.toString()` 是调用了 Order 的 toString()
+方法。 如果保存JSON，重写一下Order的 toString() 方法即可。
 
 ```java
     @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            category = "MANAGER_VIEW", content = "{{#order.toString()}}",
-            success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
+        category = "MANAGER_VIEW", detail = "{{#order.toString()}}",
+        success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
     public boolean createOrder(Order order) {
         log.info("【创建订单】orderNo={}", order.getOrderNo());
         // db insert order
@@ -118,7 +120,7 @@ public class LogConfiguration {
 
     @Bean
     public LogOperator operatorGetService() {
-        return () -> OrgUserUtils.getCurrentUser();
+        return () -> OrgUserUtils.getCurrentUserId();
     }
 }
 
@@ -128,7 +130,7 @@ public class DefaultLogOperatorImpl implements LogOperator {
 
     @Override
     public String getOperatorId() {
-        return OrgUserUtils.getCurrentUser();
+        return OrgUserUtils.getCurrentUserId();
     }
 }
 ```
@@ -144,14 +146,14 @@ public class DefaultLogOperatorImpl implements LogOperator {
 
 ```java
     // 没有使用自定义函数
-        @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{{#orderId}},更新内容为....", content = "{{#order.toString()}}")
-    public boolean update(Long orderId, Order order) {
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
+public boolean update(Long orderId,Order order){
         return false;
     }
 
-    //使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
-    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{ORDER{#orderId}},更新内容为....", content = "{{#order.toString()}}")
-    public boolean update(Long orderId, Order order) {
+//使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{ORDER{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
+public boolean update(Long orderId,Order order){
         return false;
     }
 
@@ -184,7 +186,7 @@ public class DefaultLogOperatorImpl implements LogOperator {
 ###### 7. 日志文案调整 使用 SpEL 三目表达式
 
 ```java
-    @Log(logType = "BIZ-LOG", bizNo = "{{#businessLineId}}", success = "{{#disable ? '停用' : '启用'}}了自定义属性{ATTRIBUTE{#attributeId}}")
+    @Log(logType = "BIZ-LOG", bizId = "{{#businessLineId}}", success = "{{#disable ? '停用' : '启用'}}了自定义属性{ATTRIBUTE{#attributeId}}")
     public CustomAttributeVO disableAttribute(Long businessLineId, Long attributeId, boolean disable) {
     	return xxx;
     }
@@ -266,7 +268,7 @@ public class DefaultLogOperatorImpl implements LogOperator {
     
 ```
 
-#### 框架的扩展点
+#### 扩展点
 
 - 重写`LogOperator`通过上下文获取用户的扩展，例子如下
 
@@ -276,7 +278,7 @@ public class DefaultLogOperator implements LogOperator {
 
     @Override
     public String getOperatorId() {
-         return UserUtils.getUser();
+         return UserUtils.getUserId();
     }
 }
 ```
@@ -294,7 +296,7 @@ public class DbLogServiceImpl implements LogPersistence {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void record(LogRecord logRecord) {
+    public void log(LogRecord logRecord) {
         log.info("【logRecord】log={}", logRecord);
         LogRecordPO logRecordPO = LogRecordPO.toPo(logRecord);
         logRecordMapper.insert(logRecordPO);
@@ -327,7 +329,7 @@ public class UserParseFunction implements ParseFunction {
         }
         List<String> userIds = Lists.newArrayList(splitter.split(value));
         List<User> misDOList = userQueryService.getUserList(userIds);
-        Map<String, User> userMap = StreamUtil.extractMap(misDOList, User::getId);
+        Map<String, User> userMap = StreamUtils.extractMap(misDOList, User::getId);
         StringBuilder stringBuilder = new StringBuilder();
         for (String userId : userIds) {
             stringBuilder.append(userId);

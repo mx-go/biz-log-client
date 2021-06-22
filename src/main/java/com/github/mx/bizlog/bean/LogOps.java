@@ -13,6 +13,7 @@ public class LogOps {
     private String bizId;
     private String successLogTemplate;
     private String failLogTemplate;
+    private String detail;
     private String operatorId;
     private String category;
     private String content;

@@ -122,18 +122,19 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         String logType = logOps.getLogType();
         String operatorId = logOps.getOperatorId();
         String category = logOps.getCategory();
+        String detail = logOps.getDetail();
         String content = logOps.getContent();
         //获取需要解析的表达式
         List<String> spElTemplates;
         String realOperator = "";
         if (StringUtils.isEmpty(operatorId) || DefaultLogOperator.DEFAULT_OPERATOR_ID.equalsIgnoreCase(operatorId)) {
-            spElTemplates = Lists.newArrayList(bizId, action, category, content);
+            spElTemplates = Lists.newArrayList(bizId, action, category, detail, content);
             if (StringUtils.isEmpty(logOperator.getOperatorId())) {
                 log.warn("operatorId is null");
             }
             realOperator = logOperator.getOperatorId();
         } else {
-            spElTemplates = Lists.newArrayList(bizId, action, category, content, operatorId);
+            spElTemplates = Lists.newArrayList(bizId, action, category, content, detail, operatorId);
         }
         Map<String, String> expressionValues = processTemplate(spElTemplates, ret, targetClass, method, args, errorMsg);
 
@@ -141,11 +142,12 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 .appName(ConfigFactory.getApplicationName())
                 .logType(logType)
                 .bizId(expressionValues.get(bizId))
-                .operatorId(!StringUtils.isEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
-                .category(expressionValues.get(category))
-                .content(expressionValues.get(content))
                 .success(success)
+                .category(expressionValues.get(category))
                 .action(expressionValues.get(action))
+                .detail(expressionValues.get(detail))
+                .content(expressionValues.get(content))
+                .operatorId(!StringUtils.isEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
                 .startTime(startTime)
                 .endTime(endTime)
                 .createTime(LocalDateTime.now())

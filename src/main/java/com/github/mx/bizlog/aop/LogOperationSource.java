@@ -53,6 +53,7 @@ public class LogOperationSource {
         LogOps logOps = LogOps.builder()
                 .successLogTemplate(logAnnotation.success())
                 .failLogTemplate(logAnnotation.fail())
+                .detail(logAnnotation.detail())
                 .logType(logAnnotation.logType())
                 .bizId(logAnnotation.bizId())
                 .operatorId(logAnnotation.operatorId())

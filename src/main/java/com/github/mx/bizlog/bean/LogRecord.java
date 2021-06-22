@@ -49,6 +49,10 @@ public class LogRecord {
      */
     @Length(max = 511, message = "opAction max length is 511")
     private String action;
+    /**
+     * 详情
+     */
+    private String detail;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
