@@ -8,7 +8,7 @@ import org.springframework.core.Ordered;
 import java.lang.annotation.*;
 
 /**
- * 注解到启动类上
+ * Annotate to the startup class
  * <p>
  * Create by max on 2021/02/27
  **/

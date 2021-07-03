@@ -174,15 +174,15 @@ public class LogHelper {
                 NetworkInterface anInterface = interfaces.nextElement();
                 // 在所有的接口下再遍历IP
                 for (Enumeration<InetAddress> inetAddresses = anInterface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
-                    InetAddress inetAddr = inetAddresses.nextElement();
+                    InetAddress address = inetAddresses.nextElement();
                     // 排除loopback类型地址
-                    if (!inetAddr.isLoopbackAddress()) {
-                        if (inetAddr.isSiteLocalAddress()) {
+                    if (!address.isLoopbackAddress()) {
+                        if (address.isSiteLocalAddress()) {
                             // 如果是site-local地址，就是它了
-                            return inetAddr.getHostAddress();
+                            return address.getHostAddress();
                         } else if (candidateAddress == null) {
                             // site-local类型的地址未被发现，先记录候选地址
-                            candidateAddress = inetAddr;
+                            candidateAddress = address;
                         }
                     }
                 }

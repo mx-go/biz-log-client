@@ -2,6 +2,9 @@
 
 此组件解决的问题是： 「谁」在「什么时间」对「什么」做了「什么事」
 
+1. 针对业务关键调用存储日志，便于问题追溯、定位与排查；
+2. 记录用户对数据的操作，分析用户请求；
+
 > 本组件目前针对 Spring-boot 做了 Autoconfig，如果是 SpringMVC，则需要在XML初始Bean
 
 ## 使用方式
@@ -14,7 +17,7 @@
 <dependency>
     <groupId>com.github.mx-go</groupId>
     <artifactId>biz-log-client</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -40,9 +43,9 @@ public class ProviderApplication {
 - SpEL 表达式：其中用双大括号包围起来的（例如：`{{#order.purchaseName}}）``#order.purchaseName` 是 SpEL表达式。Spring中支持的它都支持。比如调用静态方法，三目表达式。SpEL 可以使用方法中的任何参数。
 
 ```java
-@Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
-    public boolean createOrder(Order order) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
+public boolean createOrder(Order order){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
     }
@@ -53,10 +56,10 @@ public class ProviderApplication {
 ###### 2. 期望记录失败的日志, 如果抛出异常则记录fail的日志，没有则抛出记录 `success` 的日志
 
 ```java
-    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
+    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
         success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
-    public boolean createOrder(Order order) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+public boolean createOrder(Order order){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
     }
@@ -70,10 +73,10 @@ public class ProviderApplication {
 但是运营期望可以看到用户的日志以及运营自己操作的日志，这些操作日志的bizId都是订单号，所以为了扩展添加了类型字段，主要是为了对日志做分类，查询方便，支持更多的业务。
 
 ```java
-     @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」", category = "MANAGER",
-            success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
-    public boolean createOrder(Order order) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+     @Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」", category = "MANAGER",
+        success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
+public boolean createOrder(Order order){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
     }
@@ -85,11 +88,11 @@ public class ProviderApplication {
 方法。 如果保存JSON，重写一下Order的 toString() 方法即可。
 
 ```java
-    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
+    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
         category = "MANAGER_VIEW", detail = "{{#order.toString()}}",
         success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
-    public boolean createOrder(Order order) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+public boolean createOrder(Order order){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
     }
@@ -100,11 +103,11 @@ public class ProviderApplication {
 - 第一种：手工在`Log`的注解上指定。这种需要方法参数上有`operatorId`
 
 ```java
-    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
-            category = "MANAGER_VIEW", content = "{{#order.toString()}}", operatorId = "{{#currentUser}}",
+    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」",
+        category = "MANAGER_VIEW", content = "{{#order.toString()}}", operatorId = "{{#currentUser}}",
             success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
-    public boolean createOrder(Order order, String currentUser) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+public boolean createOrder(Order order,String currentUser){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
     }
@@ -146,13 +149,13 @@ public class DefaultLogOperatorImpl implements LogOperator {
 
 ```java
     // 没有使用自定义函数
-@Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", success = "更新了订单{{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
 public boolean update(Long orderId,Order order){
         return false;
     }
 
 //使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
-@Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}", success = "更新了订单{ORDER{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}", success = "更新了订单{ORDER{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
 public boolean update(Long orderId,Order order){
         return false;
     }
@@ -198,10 +201,10 @@ public boolean update(Long orderId,Order order){
 
 ```java
     @Override
-    @Log(logType = "BIZ-LOG", bizId = "{{#order.orderNo}}",
-            success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,测试变量「{{#innerOrder.productName}}」,下单结果:{{#_ret}}",)
-    public boolean createOrder(Order order) {
-        log.info("【创建订单】orderNo={}", order.getOrderNo());
+@Log(logType = "BIZ-LOG", bizId = "{{#order.orderId}}",
+        success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,测试变量「{{#innerOrder.productName}}」,下单结果:{{#_ret}}",)
+public boolean createOrder(Order order){
+        log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         Order order = new Order();
         order.setProductName("内部变量测试");
