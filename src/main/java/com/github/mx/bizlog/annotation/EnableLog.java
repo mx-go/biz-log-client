@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 public @interface EnableLog {
 
     /**
-     * 日志AOP的顺序
+     * AOP order
      */
     int order() default Ordered.LOWEST_PRECEDENCE;
 
