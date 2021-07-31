@@ -24,7 +24,7 @@ public class LogValueParser implements BeanFactoryAware {
 
     protected BeanFactory beanFactory;
     private LogExpressionEvaluator expressionEvaluator = new LogExpressionEvaluator();
-    private static Pattern pattern = Pattern.compile("\\{\\s*(\\w*)\\s*\\{(.*?)}}");
+    private static final Pattern pattern = Pattern.compile("\\{\\s*(\\w*)\\s*\\{(.*?)}}");
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {

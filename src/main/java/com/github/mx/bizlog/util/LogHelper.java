@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Enumeration;
 
 /**
- * 字符串工具类
+ * 工具类
  */
 @Slf4j
 public class LogHelper {
