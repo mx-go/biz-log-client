@@ -39,14 +39,11 @@ public class LogHelper {
         if (s == null) {
             return null;
         }
-
         s = s.toLowerCase();
-
         StringBuilder sb = new StringBuilder(s.length());
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-
             if (c == SEPARATOR) {
                 upperCase = true;
             } else if (upperCase) {
@@ -56,7 +53,6 @@ public class LogHelper {
                 sb.append(c);
             }
         }
-
         return sb.toString();
     }
 
@@ -86,18 +82,14 @@ public class LogHelper {
         if (s == null) {
             return null;
         }
-
         StringBuilder sb = new StringBuilder();
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-
             boolean nextUpperCase = true;
-
             if (i < (s.length() - 1)) {
                 nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
             }
-
             if ((i > 0) && Character.isUpperCase(c)) {
                 if (!upperCase || !nextUpperCase) {
                     sb.append(SEPARATOR);
@@ -106,10 +98,8 @@ public class LogHelper {
             } else {
                 upperCase = false;
             }
-
             sb.append(Character.toLowerCase(c));
         }
-
         return sb.toString();
     }
 
