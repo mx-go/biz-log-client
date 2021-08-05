@@ -133,9 +133,20 @@ public class LogHelper {
         return ip;
     }
 
+    /**
+     * 获取调用者请求的浏览器
+     */
     public static String getBrowser(HttpServletRequest request) {
         UserAgent.ImmutableUserAgent userAgent = userAgentAnalyzer.parse(request.getHeader("User-Agent"));
         return userAgent.get(UserAgent.AGENT_NAME_VERSION).getValue();
+    }
+
+    /**
+     * 获取调用者请求的操作系统
+     */
+    public static String getOs(HttpServletRequest request) {
+        UserAgent.ImmutableUserAgent userAgent = userAgentAnalyzer.parse(request.getHeader("User-Agent"));
+        return userAgent.get(UserAgent.OPERATING_SYSTEM_NAME).getValue();
     }
 
     /**
