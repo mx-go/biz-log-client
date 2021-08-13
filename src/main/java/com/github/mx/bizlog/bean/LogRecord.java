@@ -1,5 +1,6 @@
 package com.github.mx.bizlog.bean;
 
+import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
 import com.github.mx.nacos.config.core.ConfigFactory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,11 +18,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LogRecord {
-
     /**
      * 应用名称
      */
     private String appName;
+    /**
+     * 功能名称
+     */
+    private String title;
     /**
      * 日志类型
      */
@@ -33,7 +37,6 @@ public class LogRecord {
     /**
      * 业务ID
      */
-    @Length(max = 200, message = "bizId max length is 200")
     private String bizId;
     /**
      * 操作人ID
@@ -43,11 +46,11 @@ public class LogRecord {
     /**
      * 是否成功
      */
-    private Boolean success;
+    @Builder.Default
+    private Boolean success = true;
     /**
      * 具体动作
      */
-    @Length(max = 511, message = "opAction max length is 511")
     private String action;
     /**
      * 详情
@@ -63,17 +66,21 @@ public class LogRecord {
     private String content;
 
     public LogRecord(String bizId, String content) {
-        this.appName = ConfigFactory.getApplicationName();
+        this.setDefault();
         this.bizId = bizId;
         this.content = content;
-        this.createTime = LocalDateTime.now();
     }
 
     public LogRecord(String bizId, String category, String content) {
-        this.appName = ConfigFactory.getApplicationName();
+        this.setDefault();
         this.bizId = bizId;
         this.category = category;
         this.content = content;
+    }
+
+    private void setDefault() {
+        this.appName = ConfigFactory.getApplicationName();
+        this.operatorId = DefaultLogOperator.DEFAULT_OPERATOR_ID;
         this.createTime = LocalDateTime.now();
     }
 }

@@ -51,6 +51,7 @@ public class LogOperationSource {
 
     private LogOps parseLogAnnotation(AnnotatedElement ae, Log logAnnotation) {
         LogOps logOps = LogOps.builder()
+                .title(logAnnotation.title())
                 .successLogTemplate(logAnnotation.success())
                 .failLogTemplate(logAnnotation.fail())
                 .detail(logAnnotation.detail())
@@ -69,9 +70,9 @@ public class LogOperationSource {
             throw new IllegalStateException("Invalid log annotation configuration on '" +
                     ae.toString() + "'. 'one of successTemplate and failLogTemplate' attribute must be set.");
         }*/
-        if (StringUtils.isAnyBlank(logOps.getLogType())) {
+        if (StringUtils.isAnyBlank(logOps.getBizId())) {
             throw new IllegalStateException("Invalid log annotation configuration on '" +
-                    ae.toString() + "'. 'logType' attribute must be set.");
+                    ae.toString() + "'. 'bizId' attribute must be set.");
         }
     }
 }

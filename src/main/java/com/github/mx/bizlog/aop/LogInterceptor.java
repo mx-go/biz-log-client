@@ -16,11 +16,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -69,7 +69,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
-            errorMsg = ExceptionUtils.getStackTrace(e);
+            errorMsg = StringUtils.substring(ExceptionUtils.getStackTrace(e), 2048);
             throwable = e;
         } finally {
             LocalDateTime endTime = LocalDateTime.now();
@@ -105,7 +105,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         for (LogOps logOps : operations) {
             try {
                 String action = success ? logOps.getSuccessLogTemplate() : logOps.getFailLogTemplate();
-                if (!StringUtils.isEmpty(logOps.getLogType())) {
+                if (StringUtils.isNotEmpty(logOps.getBizId())) {
                     LogRecord logRecord = this.wrapper(ret, method, args, targetClass, success, errorMsg, logOps, action, startTime, endTime);
                     Preconditions.checkNotNull(logPersistence, "logPersistence not init!!");
                     this.logPersistence.log(logRecord);
@@ -119,7 +119,8 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
     private LogRecord wrapper(Object ret, Method method, Object[] args, Class<?> targetClass, boolean success,
                               String errorMsg, LogOps logOps, String action, LocalDateTime startTime, LocalDateTime endTime) {
         String bizId = logOps.getBizId();
-        String logType = logOps.getLogType();
+        String title = logOps.getTitle();
+        String logType = logOps.getLogType().name();
         String operatorId = logOps.getOperatorId();
         String category = logOps.getCategory();
         String detail = logOps.getDetail();
@@ -140,6 +141,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
 
         return LogRecord.builder()
                 .appName(ConfigFactory.getApplicationName())
+                .title(title)
                 .logType(logType)
                 .bizId(expressionValues.get(bizId))
                 .success(success)
@@ -147,7 +149,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 .action(expressionValues.get(action))
                 .detail(expressionValues.get(detail))
                 .content(expressionValues.get(content))
-                .operatorId(!StringUtils.isEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
+                .operatorId(StringUtils.isNotEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
                 .startTime(startTime)
                 .endTime(endTime)
                 .createTime(LocalDateTime.now())
