@@ -30,6 +30,7 @@ public @interface Log {
 
     /**
      * 日志类型
+     * 默认WEB类型
      */
     LogType logType() default LogType.WEB;
 
@@ -65,6 +66,7 @@ public @interface Log {
 
     /**
      * 自定义信息
+     * 默认取UserAgent部分信息
      */
-    String content() default "";
+    String content() default "{USERAGENT{'MX'}}";
 }

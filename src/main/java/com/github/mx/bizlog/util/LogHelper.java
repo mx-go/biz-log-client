@@ -7,7 +7,6 @@ import nl.basjes.parse.useragent.UserAgentAnalyzer;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -106,7 +105,7 @@ public class LogHelper {
     /**
      * 获取ip地址
      */
-    public static String getIp(HttpServletRequest request) {
+    public static String getIpAddr(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
@@ -118,17 +117,13 @@ public class LogHelper {
             ip = request.getRemoteAddr();
         }
         String comma = ",";
-        String localhost = "127.0.0.1";
         if (ip.contains(comma)) {
             ip = ip.split(",")[0];
         }
-        if (localhost.equals(ip)) {
+        String localhost = "127.0.0.1";
+        if (localhost.equals(ip) || "0.0.0.0.0.0.0.1".equals(ip)) {
             // 获取本机真正的ip地址
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-                log.error(e.getMessage(), e);
-            }
+            ip = getLocalIp();
         }
         return ip;
     }
