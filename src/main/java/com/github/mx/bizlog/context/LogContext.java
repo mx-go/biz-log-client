@@ -13,33 +13,33 @@ import java.util.Stack;
  **/
 public class LogContext {
 
-    private static final InheritableThreadLocal<Stack<Map<String, Object>>> variableMapStack = new InheritableThreadLocal<>();
+    private static final InheritableThreadLocal<Stack<Map<String, Object>>> VARIABLE_MAP_STACK = new InheritableThreadLocal<>();
 
     public static void putVariable(String name, Object value) {
-        if (variableMapStack.get() == null) {
+        if (VARIABLE_MAP_STACK.get() == null) {
             Stack<Map<String, Object>> stack = new Stack<>();
-            variableMapStack.set(stack);
+            VARIABLE_MAP_STACK.set(stack);
         }
-        Stack<Map<String, Object>> mapStack = variableMapStack.get();
+        Stack<Map<String, Object>> mapStack = VARIABLE_MAP_STACK.get();
         if (mapStack.size() == 0) {
-            variableMapStack.get().push(new HashMap<>());
+            VARIABLE_MAP_STACK.get().push(new HashMap<>());
         }
-        variableMapStack.get().peek().put(name, value);
+        VARIABLE_MAP_STACK.get().peek().put(name, value);
     }
 
     public static Object getVariable(String key) {
-        Map<String, Object> variableMap = variableMapStack.get().peek();
+        Map<String, Object> variableMap = VARIABLE_MAP_STACK.get().peek();
         return variableMap.get(key);
     }
 
     public static Map<String, Object> getVariables() {
-        Stack<Map<String, Object>> mapStack = variableMapStack.get();
+        Stack<Map<String, Object>> mapStack = VARIABLE_MAP_STACK.get();
         return mapStack.peek();
     }
 
     public static void clear() {
-        if (variableMapStack.get() != null) {
-            variableMapStack.get().pop();
+        if (VARIABLE_MAP_STACK.get() != null) {
+            VARIABLE_MAP_STACK.get().pop();
         }
     }
 
@@ -48,11 +48,11 @@ public class LogContext {
      * 每进入一个方法初始化一个 span 放入到 stack中，方法执行完后 pop 掉这个span
      */
     public static void putEmptySpan() {
-        Stack<Map<String, Object>> mapStack = variableMapStack.get();
+        Stack<Map<String, Object>> mapStack = VARIABLE_MAP_STACK.get();
         if (mapStack == null) {
             Stack<Map<String, Object>> stack = new Stack<>();
-            variableMapStack.set(stack);
+            VARIABLE_MAP_STACK.set(stack);
         }
-        variableMapStack.get().push(Maps.newHashMap());
+        VARIABLE_MAP_STACK.get().push(Maps.newHashMap());
     }
 }
