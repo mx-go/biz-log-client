@@ -7,6 +7,10 @@ import nl.basjes.parse.useragent.UserAgentAnalyzer;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -195,5 +199,32 @@ public class LogHelper {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    /**
+     * LocalDateTime转毫秒时间戳
+     *
+     * @param localDateTime localDateTime
+     * @return 毫秒时间戳
+     */
+    public static long localDateTime2Stamp(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            throw new IllegalArgumentException("localDateTime is null");
+        }
+        return localDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+    }
+
+    /**
+     * 毫秒时间戳转LocalDateTime
+     *
+     * @param timestamp 毫秒时间戳
+     * @return LocalDateTime
+     */
+    public static LocalDateTime stamp2LocalDateTime(Long timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        Instant instant = Instant.ofEpochMilli(timestamp);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 }
