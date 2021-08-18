@@ -62,7 +62,7 @@ public boolean createOrder(Order order){
         log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
-        }
+}
 ```
 
 此时会打印操作日志 "张三下了一个订单,购买商品超值优惠红烧肉套餐」,下单结果:true"
@@ -75,7 +75,7 @@ public boolean createOrder(Order order){
         log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
-        }
+}
 ```
 
 其中的 `#_errorMsg` 是取的方法抛出异常后的异常的 `errorMessage`。
@@ -90,7 +90,7 @@ public boolean createOrder(Order order){
         log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
-        }
+}
 ```
 
 ### 4. 支持记录操作的详情或者额外信息
@@ -104,7 +104,7 @@ public boolean createOrder(Order order){
         log.info("【创建订单】orderId={}",order.getOrderId());
         // db insert order
         return true;
-        }
+}
 ```
 
 ### 5. 如何指定操作日志的操作人是什么？ 框架提供了两种方法
@@ -160,13 +160,13 @@ public class DefaultLogOperatorImpl implements LogOperator {
 @Log(logType = LogType.WEB, bizId = "{{#order.orderId}}", success = "更新了订单{{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
 public boolean update(Long orderId,Order order){
         return false;
-        }
+}
 
 //使用了自定义函数，主要是在 {{#orderId}} 的大括号中间加了 functionName
 @Log(logType = LogType.WEB, bizId = "{{#order.orderId}}", success = "更新了订单{ORDER{#orderId}},更新内容为....", detail = "{{#order.toString()}}")
 public boolean update(Long orderId,Order order){
         return false;
-        }
+}
 
 // 还需要加上函数的实现
 @Component
@@ -237,7 +237,7 @@ public void updateRequirementDocLink(String currentMisId,Long id,List<String> do
         .updater(currentMisId)
         .updateTime(new Date())
         .build());
-        }
+}
 
 
 @Component
@@ -274,7 +274,7 @@ public class DiffListParseFunction implements ParseFunction {
             }
         }
       return StringUtils.isBlank(stringBuilder) ? null : stringBuilder.substring(0, stringBuilder.length() - 1);
-    }
+}
 ```
 
 ## 扩展点
