@@ -273,7 +273,7 @@ public class DiffListParseFunction implements ParseFunction {
                 stringBuilder.append(item).append("，");
             }
         }
-        return StringUtils.isBlank(stringBuilder) ? null : stringBuilder.substring(0, stringBuilder.length() - 1);
+      return StringUtils.isBlank(stringBuilder) ? null : stringBuilder.substring(0, stringBuilder.length() - 1);
     }
 ```
 
