@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.LocalDateTime;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Create by max on 2021/02/27
@@ -41,7 +39,6 @@ public class LogRecord {
     /**
      * 操作人ID
      */
-    @Length(max = 63, message = "operatorId max length is 63")
     private String operatorId;
     /**
      * 是否成功
@@ -57,9 +54,9 @@ public class LogRecord {
      */
     private String detail;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private LocalDateTime createTime;
+    private Long startTime;
+    private Long endTime;
+    private Long createTime;
     /**
      * 描述
      */
@@ -79,8 +76,9 @@ public class LogRecord {
     }
 
     private void setDefault() {
+        this.success = true;
         this.appName = ConfigFactory.getApplicationName();
         this.operatorId = DefaultLogOperator.DEFAULT_OPERATOR_ID;
-        this.createTime = LocalDateTime.now();
+        this.createTime = ObjectUtils.defaultIfNull(this.createTime, System.currentTimeMillis());
     }
 }
