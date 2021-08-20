@@ -8,6 +8,7 @@ import com.github.mx.bizlog.extend.LogOperator;
 import com.github.mx.bizlog.extend.LogPersistence;
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
 import com.github.mx.bizlog.parser.LogValueParser;
+import com.github.mx.bizlog.util.LogHelper;
 import com.github.mx.nacos.config.core.ConfigFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -150,9 +151,9 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 .detail(expressionValues.get(detail))
                 .content(expressionValues.get(content))
                 .operatorId(StringUtils.isNotEmpty(realOperator) ? realOperator : expressionValues.get(operatorId))
-                .startTime(startTime)
-                .endTime(endTime)
-                .createTime(LocalDateTime.now())
+                .startTime(LogHelper.localDateTime2Stamp(startTime))
+                .endTime(LogHelper.localDateTime2Stamp(endTime))
+                .createTime(LogHelper.localDateTime2Stamp(LocalDateTime.now()))
                 .build();
     }
 }
