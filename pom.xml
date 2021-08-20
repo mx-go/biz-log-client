@@ -23,6 +23,7 @@
         <springframework.version>5.2.6.RELEASE</springframework.version>
         <yauaa.version>5.23</yauaa.version>
         <servlet-api.version>4.0.1</servlet-api.version>
+        <spring-boot.version>2.3.0.RELEASE</spring-boot.version>
     </properties>
 
     <dependencies>
@@ -50,7 +51,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.3.0.RELEASE</version>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
