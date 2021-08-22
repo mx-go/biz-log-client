@@ -66,10 +66,6 @@ public class LogOperationSource {
     }
 
     private void validateLogOperation(AnnotatedElement ae, LogOps logOps) {
-        /*if (!StringUtils.hasText(logOps.getSuccessLogTemplate()) && !StringUtils.hasText(logOps.getFailLogTemplate())) {
-            throw new IllegalStateException("Invalid log annotation configuration on '" +
-                    ae.toString() + "'. 'one of successTemplate and failLogTemplate' attribute must be set.");
-        }*/
         if (StringUtils.isAnyBlank(logOps.getBizId())) {
             throw new IllegalStateException("Invalid log annotation configuration on '" +
                     ae.toString() + "'. 'bizId' attribute must be set.");
