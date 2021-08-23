@@ -26,7 +26,7 @@ public class DefaultLogPersistence implements LogPersistence, Runnable, AutoClos
     public DefaultLogPersistence() {
         ThreadFactory tf = new ThreadFactoryBuilder().setNameFormat("biz-log-%s").build();
         executor = Executors.newSingleThreadScheduledExecutor(tf);
-        executor.scheduleAtFixedRate(this, 10, 5, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this, 1000, 500, TimeUnit.MILLISECONDS);
         Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
     }
 
