@@ -15,6 +15,10 @@ public enum LogType {
      */
     JOB,
     /**
+     * HTTP调用
+     */
+    HTTP,
+    /**
      * RPC调用
      */
     RPC,
