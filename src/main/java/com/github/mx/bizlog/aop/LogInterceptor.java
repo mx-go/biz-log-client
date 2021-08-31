@@ -139,6 +139,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             spElTemplates = Lists.newArrayList(bizId, action, category, content, detail, operatorId);
         }
         Map<String, String> expressionValues = processTemplate(spElTemplates, ret, targetClass, method, args, errorMsg);
+        action = (success && ret == null) ? StringUtils.EMPTY : action;
 
         return LogRecord.builder()
                 .appName(ConfigFactory.getApplicationName())
