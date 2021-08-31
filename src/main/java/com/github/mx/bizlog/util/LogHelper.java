@@ -1,8 +1,7 @@
 package com.github.mx.bizlog.util;
 
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
-import nl.basjes.parse.useragent.UserAgent;
-import nl.basjes.parse.useragent.UserAgentAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -23,13 +22,6 @@ public class LogHelper {
 
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
-
-    private static final UserAgentAnalyzer userAgentAnalyzer = UserAgentAnalyzer
-            .newBuilder()
-            .hideMatcherLoadStats()
-            .withCache(10000)
-            .withField(UserAgent.AGENT_NAME_VERSION)
-            .build();
 
     /**
      * 驼峰命名法工具
@@ -136,16 +128,16 @@ public class LogHelper {
      * 获取调用者请求的浏览器
      */
     public static String getBrowser(HttpServletRequest request) {
-        UserAgent.ImmutableUserAgent userAgent = userAgentAnalyzer.parse(request.getHeader("User-Agent"));
-        return userAgent.get(UserAgent.AGENT_NAME_VERSION).getValue();
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+        return userAgent.getBrowser().getName();
     }
 
     /**
      * 获取调用者请求的操作系统
      */
     public static String getOs(HttpServletRequest request) {
-        UserAgent.ImmutableUserAgent userAgent = userAgentAnalyzer.parse(request.getHeader("User-Agent"));
-        return userAgent.get(UserAgent.OPERATING_SYSTEM_NAME).getValue();
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+        return userAgent.getOperatingSystem().getName();
     }
 
     /**
