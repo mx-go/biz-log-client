@@ -21,16 +21,16 @@ public class BizLog {
         BizLog.logPersistence = logPersistence;
     }
 
-    public static <T, R> void log(T bizId, R content) {
+    public static <T, R> void log(String title, T bizId, R content) {
         if (bizId == null) {
             log.warn("bizId cant be null. Please check your parameter. content:{}", content);
             return;
         }
-        logPersistence.log(new LogRecord(String.valueOf(bizId), JSON.toJSONString(content)));
+        logPersistence.log(new LogRecord(title, String.valueOf(bizId), JSON.toJSONString(content)));
     }
 
-    public static <T, R> void log(Collection<T> bizIds, R content) {
-        bizIds.forEach(bizId -> logPersistence.log(new LogRecord(String.valueOf(bizId), JSON.toJSONString(content))));
+    public static <T, R> void log(String title, Collection<T> bizIds, R content) {
+        bizIds.forEach(bizId -> logPersistence.log(new LogRecord(title, String.valueOf(bizId), JSON.toJSONString(content))));
     }
 
     public static void log(LogRecord record) {

@@ -5,7 +5,6 @@ import com.github.mx.nacos.config.core.ConfigFactory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -14,7 +13,6 @@ import org.apache.commons.lang3.ObjectUtils;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class LogRecord {
     /**
      * 应用名称
@@ -62,13 +60,17 @@ public class LogRecord {
      */
     private String content;
 
-    public LogRecord(String bizId, String content) {
+    public LogRecord(String title) {
+        setDefault();
+    }
+
+    public LogRecord(String title, String bizId, String content) {
         this.setDefault();
         this.bizId = bizId;
         this.content = content;
     }
 
-    public LogRecord(String bizId, String category, String content) {
+    public LogRecord(String title, String bizId, String category, String content) {
         this.setDefault();
         this.bizId = bizId;
         this.category = category;
@@ -79,6 +81,8 @@ public class LogRecord {
         this.success = true;
         this.appName = ConfigFactory.getApplicationName();
         this.operatorId = DefaultLogOperator.DEFAULT_OPERATOR_ID;
+        this.createTime = System.currentTimeMillis();
+        this.endTime = System.currentTimeMillis();
         this.createTime = ObjectUtils.defaultIfNull(this.createTime, System.currentTimeMillis());
     }
 }

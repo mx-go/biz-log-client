@@ -19,9 +19,9 @@ public interface LogPersistence {
     default void log(Collection<LogRecord> records) {
     }
 
-    default <T, R> void log(T bizId, R content) {
+    default <T, R> void log(String title, T bizId, R content) {
     }
 
-    default <T, R> void log(Collection<T> bizIds, R content) {
+    default <T, R> void log(String title, Collection<T> bizIds, R content) {
     }
 }
