@@ -60,6 +60,7 @@ public class LogOperationSource {
                 .operatorId(logAnnotation.operatorId())
                 .category(logAnnotation.category())
                 .content(logAnnotation.content())
+                .condition(logAnnotation.condition())
                 .build();
         validateLogOperation(ae, logOps);
         return logOps;

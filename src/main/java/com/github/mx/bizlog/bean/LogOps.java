@@ -19,4 +19,5 @@ public class LogOps {
     private String operatorId;
     private String category;
     private String content;
+    private String condition;
 }

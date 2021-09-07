@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Create by max on 2021/02/27
@@ -70,7 +71,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
-            errorMsg = StringUtils.substring(ExceptionUtils.getStackTrace(e), 2048);
+            errorMsg = StringUtils.substring(ExceptionUtils.getStackTrace(e), 1024);
             throwable = e;
         } finally {
             LocalDateTime endTime = LocalDateTime.now();
@@ -108,8 +109,10 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 String action = success ? logOps.getSuccessLogTemplate() : logOps.getFailLogTemplate();
                 if (StringUtils.isNotEmpty(logOps.getBizId())) {
                     LogRecord logRecord = this.wrapper(ret, method, args, targetClass, success, errorMsg, logOps, action, startTime, endTime);
-                    Preconditions.checkNotNull(logPersistence, "logPersistence not init!!");
-                    this.logPersistence.log(logRecord);
+                    if (Objects.nonNull(logRecord)) {
+                        Preconditions.checkNotNull(logPersistence, "logPersistence not init!!");
+                        this.logPersistence.log(logRecord);
+                    }
                 }
             } catch (Exception e) {
                 log.error("log record execute exception", e);
@@ -126,6 +129,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         String category = logOps.getCategory();
         String detail = logOps.getDetail();
         String content = logOps.getContent();
+        String condition = logOps.getCondition();
         //获取需要解析的表达式
         List<String> spElTemplates;
         String realOperator = "";
@@ -138,8 +142,15 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         } else {
             spElTemplates = Lists.newArrayList(bizId, action, category, content, detail, operatorId);
         }
+        if (!StringUtils.isEmpty(condition)) {
+            spElTemplates.add(condition);
+        }
         Map<String, String> expressionValues = processTemplate(spElTemplates, ret, targetClass, method, args, errorMsg);
         action = (success && ret == null) ? StringUtils.EMPTY : action;
+
+        if (!conditionPassed(condition, expressionValues)) {
+            return null;
+        }
 
         return LogRecord.builder()
                 .appName(ConfigFactory.getApplicationName())
@@ -156,5 +167,9 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                 .endTime(LogHelper.localDateTime2Stamp(endTime))
                 .createTime(LogHelper.localDateTime2Stamp(LocalDateTime.now()))
                 .build();
+    }
+
+    private boolean conditionPassed(String condition, Map<String, String> expressionValues) {
+        return StringUtils.isEmpty(condition) || StringUtils.endsWithIgnoreCase(expressionValues.get(condition), "true");
     }
 }

@@ -69,4 +69,10 @@ public @interface Log {
      * 默认取UserAgent部分信息
      */
     String content() default "{USERAGENT{'MX'}}";
+
+    /**
+     * 是否存储
+     * 默认存储
+     */
+    String condition() default "true";
 }
