@@ -44,7 +44,7 @@ public @interface Log {
      * 成功时信息
      * 默认取返回值
      */
-    String success() default "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret)}}}";
+    String success() default "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret)}}";
 
     /**
      * 失败时信息
@@ -56,7 +56,7 @@ public @interface Log {
      * 详情
      * 默认为入参
      */
-    String detail() default "{{#_params}}";
+    String detail() default "{{T(com.alibaba.fastjson.JSON).toJSONString(#_params)}}";
 
     /**
      * 操作人
@@ -72,7 +72,7 @@ public @interface Log {
 
     /**
      * 是否存储
-     * 默认存储
+     * true || "" 会上报
      */
     String condition() default "true";
 }

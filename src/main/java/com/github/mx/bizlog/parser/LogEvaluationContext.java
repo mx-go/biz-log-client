@@ -1,7 +1,7 @@
 package com.github.mx.bizlog.parser;
 
-import com.alibaba.fastjson.JSON;
 import com.github.mx.bizlog.context.LogContext;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.validation.BindingResult;
@@ -10,9 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Create by max on 2021/02/27
@@ -40,17 +38,22 @@ public class LogEvaluationContext extends MethodBasedEvaluationContext {
     /**
      * 参数拼装
      */
-    private String argsArrayToString(Object[] paramsArray) {
-        StringBuilder params = new StringBuilder();
+    private Object argsArrayToString(Object[] paramsArray) {
+        List<Object> result = new ArrayList<>(16);
         if (paramsArray != null && paramsArray.length > 0) {
             for (Object o : paramsArray) {
                 if (Objects.nonNull(o) && !isFilterObject(o)) {
-                    Object jsonObj = JSON.toJSON(o);
-                    params.append(jsonObj.toString()).append(" ");
+                    result.add(o);
                 }
             }
         }
-        return params.toString().trim();
+        if (result.size() == 0) {
+            return StringUtils.EMPTY;
+        }
+        if (result.size() == 1) {
+            return result.get(0);
+        }
+        return result;
     }
 
     /**
