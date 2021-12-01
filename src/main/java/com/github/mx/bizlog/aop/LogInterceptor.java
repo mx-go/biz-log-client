@@ -71,7 +71,8 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             ret = invoker.proceed();
         } catch (Exception e) {
             success = false;
-            errorMsg = StringUtils.substring(ExceptionUtils.getStackTrace(e), 1024);
+            String stackTrace = ExceptionUtils.getStackTrace(e);
+            errorMsg = stackTrace.substring(0, Math.min(stackTrace.length(), 1024)) + "...";
             throwable = e;
         } finally {
             LocalDateTime endTime = LocalDateTime.now();
