@@ -135,13 +135,13 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         List<String> spElTemplates;
         String realOperator = "";
         if (StringUtils.isEmpty(operatorId) || DefaultLogOperator.DEFAULT_OPERATOR_ID.equalsIgnoreCase(operatorId)) {
-            spElTemplates = Lists.newArrayList(bizId, action, category, detail, content);
+            spElTemplates = Lists.newArrayList(title, bizId, action, category, detail, content);
             if (StringUtils.isEmpty(logOperator.getOperatorId())) {
                 log.warn("operatorId is null");
             }
             realOperator = logOperator.getOperatorId();
         } else {
-            spElTemplates = Lists.newArrayList(bizId, action, category, content, detail, operatorId);
+            spElTemplates = Lists.newArrayList(title, bizId, action, category, content, detail, operatorId);
         }
         if (!StringUtils.isEmpty(condition)) {
             spElTemplates.add(condition);
@@ -155,7 +155,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
 
         return LogRecord.builder()
                 .appName(ConfigFactory.getApplicationName())
-                .title(title)
+                .title(expressionValues.get(title))
                 .logType(logType)
                 .bizId(expressionValues.get(bizId))
                 .success(success)
