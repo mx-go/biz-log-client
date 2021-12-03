@@ -24,7 +24,7 @@ public class LogValueParser implements BeanFactoryAware {
 
     protected BeanFactory beanFactory;
     private LogExpressionEvaluator expressionEvaluator = new LogExpressionEvaluator();
-    private static final Pattern pattern = Pattern.compile("\\{\\s*(\\w*)\\s*\\{(.*?)}}");
+    private static final Pattern PATTERN = Pattern.compile("\\{\\s*(\\w*)\\s*\\{(.*?)}}");
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
@@ -42,7 +42,7 @@ public class LogValueParser implements BeanFactoryAware {
                 continue;
             }
             if (expressionTemplate.contains("{{") || expressionTemplate.contains("{")) {
-                Matcher matcher = pattern.matcher(expressionTemplate);
+                Matcher matcher = PATTERN.matcher(expressionTemplate);
                 StringBuffer parsedStr = new StringBuffer();
                 while (matcher.find()) {
                     String expression = matcher.group(2);
