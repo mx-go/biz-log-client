@@ -66,12 +66,14 @@ public class DefaultLogPersistence implements LogPersistence, Runnable, AutoClos
 
     @Override
     public void run() {
+        List<LogRecord> records = getAndSet();
         try {
-            List<LogRecord> records = getAndSet();
             // 具体处理逻辑
             log.info("persist bizLog. {}", records);
         } catch (Exception e) {
             log.error("");
+            // resend
+            CURRENT.addAll(records);
         }
     }
 
