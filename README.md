@@ -5,7 +5,7 @@
 1. 针对业务关键调用存储日志，便于问题追溯、定位与排查；
 2. 记录用户对数据的操作，分析用户请求；
 
-> 本组件目前针对 Springoot 做了 Autoconfig，如果是 SpringMVC，则需要在XML初始Bean
+> 本组件目前针对SpringBoot做了Autoconfig，如果是SpringMVC，则需要在XML初始Bean
 
 ## 使用方式
 
