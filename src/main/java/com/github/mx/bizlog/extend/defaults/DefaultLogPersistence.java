@@ -24,7 +24,7 @@ public class DefaultLogPersistence implements LogPersistence, Runnable, AutoClos
     private static List<LogRecord> CURRENT = Lists.newCopyOnWriteArrayList();
 
     public DefaultLogPersistence() {
-        ThreadFactory tf = new ThreadFactoryBuilder().setNameFormat("biz-log-%s").build();
+        ThreadFactory tf = new ThreadFactoryBuilder().setNameFormat("biz-log-%d").build();
         executor = Executors.newSingleThreadScheduledExecutor(tf);
         executor.scheduleAtFixedRate(this, 1000, 500, TimeUnit.MILLISECONDS);
         Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
