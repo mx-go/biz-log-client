@@ -64,6 +64,12 @@ public class LogRecord {
         setDefault();
     }
 
+    public LogRecord(String title, String bizId) {
+        this.setDefault();
+        this.title = title;
+        this.bizId = bizId;
+    }
+
     public LogRecord(String title, String bizId, String content) {
         this.setDefault();
         this.bizId = bizId;
