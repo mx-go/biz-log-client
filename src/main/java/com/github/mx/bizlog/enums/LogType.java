@@ -27,6 +27,10 @@ public enum LogType {
      */
     MQ,
     /**
+     * 本地调用
+     */
+    LOCAL,
+    /**
      * 其他
      */
     OTHER,
