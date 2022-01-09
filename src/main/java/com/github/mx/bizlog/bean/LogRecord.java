@@ -2,6 +2,7 @@ package com.github.mx.bizlog.bean;
 
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
 import com.github.mx.nacos.config.core.ConfigFactory;
+import com.google.common.base.Joiner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -52,13 +53,20 @@ public class LogRecord {
      */
     private String detail;
 
-    private Long startTime;
-    private Long endTime;
-    private Long createTime;
+    private Long startTime = System.currentTimeMillis();
+    private Long endTime = System.currentTimeMillis();
+    private Long createTime = System.currentTimeMillis();
     /**
      * 描述
      */
     private String content;
+
+    /**
+     * 拼接bizId
+     */
+    public void spliceBizId(String... keys) {
+        this.bizId = Joiner.on("-").join(keys);
+    }
 
     public LogRecord(String title) {
         setDefault();
