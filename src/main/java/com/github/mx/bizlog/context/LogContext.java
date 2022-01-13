@@ -3,8 +3,11 @@ package com.github.mx.bizlog.context;
 import com.google.common.collect.Maps;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 自定义变量上下文
@@ -27,10 +30,15 @@ public class LogContext {
         VARIABLE_MAP_STACK.get().peek().put(name, value);
     }
 
+    public static <T, R> void putVariable(String name, List<T> argument, Function<T, R> mapper) {
+        putVariable(name, argument.stream().map(mapper).collect(Collectors.toList()));
+    }
+
     public static Object getVariable(String key) {
         Map<String, Object> variableMap = VARIABLE_MAP_STACK.get().peek();
         return variableMap.get(key);
     }
+
 
     public static Map<String, Object> getVariables() {
         Stack<Map<String, Object>> mapStack = VARIABLE_MAP_STACK.get();
