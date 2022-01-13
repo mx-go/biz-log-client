@@ -39,7 +39,6 @@ public class LogContext {
         return variableMap.get(key);
     }
 
-
     public static Map<String, Object> getVariables() {
         Stack<Map<String, Object>> mapStack = VARIABLE_MAP_STACK.get();
         return mapStack.peek();
