@@ -17,7 +17,7 @@
 <dependency>
     <groupId>com.github.mx-go</groupId>
     <artifactId>biz-log-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${latest-version}</version>
 </dependency>
 ```
 
