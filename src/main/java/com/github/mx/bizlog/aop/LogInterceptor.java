@@ -154,6 +154,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
         }
 
         return LogRecord.builder()
+                .systemCode(LogHelper.getSystemCode())
                 .appName(ConfigFactory.getApplicationName())
                 .title(expressionValues.get(title))
                 .logType(logType)

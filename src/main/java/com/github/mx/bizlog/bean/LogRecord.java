@@ -16,6 +16,10 @@ import org.apache.commons.lang3.ObjectUtils;
 @AllArgsConstructor
 public class LogRecord {
     /**
+     * 系统编码
+     */
+    private String systemCode;
+    /**
      * 应用名称
      */
     private String appName;

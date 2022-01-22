@@ -2,10 +2,12 @@ package com.github.mx.bizlog.util;
 
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,6 +24,13 @@ public class LogHelper {
 
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
+
+    private static long CACHE_STAMP;
+    private static InetAddress ADDRESS;
+
+    public static String getSystemCode() {
+        return StringUtils.defaultString(System.getenv("SYSTEM_CODE"), getHostName());
+    }
 
     /**
      * 驼峰命名法工具
@@ -191,6 +200,23 @@ public class LogHelper {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public static String getHostName() {
+        return getCachedAddress().getHostName();
+    }
+
+    private static InetAddress getCachedAddress() {
+        long now = System.currentTimeMillis();
+        if (now - CACHE_STAMP > 300000) {
+            CACHE_STAMP = now;
+            try {
+                ADDRESS = InetAddress.getLocalHost();
+            } catch (UnknownHostException e) {
+                log.error("unknown host", e);
+            }
+        }
+        return ADDRESS;
     }
 
     /**
