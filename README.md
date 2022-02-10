@@ -36,18 +36,18 @@ public class ProviderApplication {
 
 ## 注解字段释义
 
-| 名称         | 描述                  | 必填 | 默认值         | 举例               |
-|------------|---------------------| ---- |-------------| ------------------ |
-| title      | 功能名称                | 是   |             | 创建订单 |
-| bizId      | 业务主键                | 否   | 空           | ZF2021071311999802 |
-| logType    | 日志类型                | 否   | WEB         | LogType.WEB        |
-| success    | 调用成功时取值             | 否   | 方法返回值       |                    |
-| fail       | 调用失败时取值             | 否   | 调用错误详情      |                    |
-| detail     | 详情                  | 否   | 方法入参        |                    |
-| operatorId | 操作人                 | 否   | system      | max        |
-| category   | 分类                  | 否   | 空           |                    |
-| content    | 自定义信息(建议存放json便于解析) | 否   | 请求的信息(json) |    "{\"os\":\"Window10",\"ip\":\"100.119.30.17\",\"browser\":\"PostmanRuntime 7.28.3\"}"               |
-| conditon   | 是否存储                | 否   | true        |                    |
+| 名称         | 描述                  | 必填 | 默认值         | 举例                                                                                   |
+|------------|---------------------| ---- |-------------|--------------------------------------------------------------------------------------|
+| title      | 功能名称                | 是   |             | 创建订单                                                                                 |
+| bizId      | 业务主键                | 否   | 空           | ZF2021071311999802                                                                   |
+| logType    | 日志类型                | 否   | WEB         | LogType.WEB                                                                          |
+| success    | 调用成功时取值             | 否   | 方法返回值       |                                                                                      |
+| fail       | 调用失败时取值             | 否   | 调用异常详情      |                                                                                      |
+| detail     | 详情                  | 否   | 方法入参        |                                                                                      |
+| operatorId | 操作人                 | 否   | system      | rainbowhorse                                                                           |
+| category   | 分类                  | 否   | 空           |                                                                                      |
+| content    | 自定义信息(建议存放json便于解析) | 否   | 请求的信息(json) | {\"os\":\"Window10",\"ip\":\"100.119.30.17\",\"browser\":\"PostmanRuntime 7.28.3\"}" |
+| conditon   | 是否存储                | 否   | true        |                                                                                      |
 ## 日志埋点
 
 ### 1. 普通的记录日志
@@ -109,7 +109,7 @@ public boolean createOrder(Order order){
 
 ### 5. 如何指定操作日志的操作人是什么？ 框架提供了两种方法
 
-- 第一种：手工在`Log`的注解上指定。这种需要方法参数上有`operatorId`
+- 第一种：手工在`@Log`的注解上指定。这种需要方法参数上有`operatorId`
 
 ```java
 @Log(logType = LogType.WEB, bizId = "{{#order.orderId}}", fail = "创建订单失败，失败原因：「{{#_errorMsg}}」", category = "MANAGER_VIEW", content = "{{#order.toString()}}", operatorId = "{{#currentUser}}", success = "{{#order.purchaseName}}下了一个订单,购买商品「{{#order.productName}}」,下单结果:{{#_ret}}")
@@ -172,23 +172,23 @@ public boolean update(Long orderId,Order order){
 @Component
 public class OrderParseFunction implements ParseFunction {
     @Resource
-    @Lazy //为了避免类加载顺序的问题 最好为Lazy，没有问题也可以不加
+    @Lazy // 为了避免类加载顺序的问题 最好为Lazy，没有问题也可以不加
     private OrderQueryService orderQueryService;
 
     @Override
     public String functionName() {
-        //  函数名称为 ORDER
+        // 函数名称为 ORDER
         return "ORDER";
     }
 
     @Override
-    //这里的 value 可以吧 Order 的JSON对象的传递过来，然后反解析拼接一个定制的操作日志内容
+    //这里的value可以把Order的JSON对象的传递过来，然后反解析拼接一个定制的操作日志内容
     public String apply(String value) {
         if (StringUtils.isEmpty(value)) {
             return value;
         }
         Order order = orderQueryService.queryOrder(Long.parseLong(value));
-        //把订单产品名称加上便于理解，加上 ID 便于查问题
+        //把订单产品名称加上便于理解，加上ID便于查问题
         return order.getProductName().concat("(").concat(value).concat(")");
     }
 }
@@ -198,8 +198,8 @@ public class OrderParseFunction implements ParseFunction {
 
 ```java
 @Log(logType = LogType.WEB, bizId = "{{#businessLineId}}", success = "{{#disable ? '停用' : '启用'}}了自定义属性{ATTRIBUTE{#attributeId}}")
-public CustomAttributeVO disableAttribute(Long businessLineId,Long attributeId,boolean disable){
-  return xxx;
+public CustomAttributeVO disableAttribute(Long businessLineId, Long attributeId, boolean disable){
+    return xxx;
 }
 ```
 
