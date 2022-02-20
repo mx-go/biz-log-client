@@ -147,6 +147,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
             spElTemplates.add(condition);
         }
         Map<String, String> expressionValues = processTemplate(spElTemplates, ret, targetClass, method, args, errorMsg);
+        // 如果方法返回类型为void且使用了success Spel，那么action仍为空
         action = (success && ret == null) ? StringUtils.EMPTY : action;
 
         if (!conditionPassed(condition, expressionValues)) {
