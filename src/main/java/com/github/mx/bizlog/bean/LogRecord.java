@@ -7,6 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Create by max on 2021/02/27
@@ -70,6 +75,18 @@ public class LogRecord {
      */
     public void spliceBizId(String... keys) {
         this.bizId = Joiner.on("-").join(keys);
+    }
+
+    public void setBizIds(List<String> bizIds) {
+        if (bizIds != null && !bizIds.isEmpty()) {
+            this.bizId = StringUtils.join(bizIds, ",");
+        }
+    }
+
+    public <T> void setBizIds(List<T> dataList, Function<T, String> key1, Function<T, String> key2) {
+        if (dataList != null && !dataList.isEmpty()) {
+            this.setBizIds(dataList.stream().map(e -> Joiner.on("-").join(key1.apply(e), key2.apply(e))).collect(Collectors.toList()));
+        }
     }
 
     public LogRecord(String title) {
