@@ -1,5 +1,7 @@
 package com.github.mx.bizlog.bean;
 
+import com.github.mx.bizlog.enums.LogType;
+import com.github.mx.bizlog.enums.ReportType;
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
 import com.github.mx.nacos.config.core.ConfigFactory;
 import com.google.common.base.Joiner;
@@ -33,9 +35,16 @@ public class LogRecord {
      */
     private String title;
     /**
+     * 上报类型，默认升级日志。不对客户端开放
+     *
+     * @see com.github.mx.bizlog.enums.ReportType
+     */
+    @Builder.Default
+    private Integer reportType = ReportType.AUDIT.getType();
+    /**
      * 日志类型
      */
-    private String logType;
+    private LogType logType;
     /**
      * 分类
      */
@@ -89,7 +98,7 @@ public class LogRecord {
         }
     }
 
-    public LogRecord(String title) {
+    public LogRecord() {
         setDefault();
     }
 
@@ -115,6 +124,7 @@ public class LogRecord {
     private void setDefault() {
         this.success = true;
         this.appName = ConfigFactory.getApplicationName();
+        this.reportType = ReportType.AUDIT.getType();
         this.operatorId = DefaultLogOperator.DEFAULT_OPERATOR_ID;
         this.createTime = System.currentTimeMillis();
         this.endTime = System.currentTimeMillis();

@@ -4,6 +4,7 @@ import com.github.mx.bizlog.bean.LogOps;
 import com.github.mx.bizlog.bean.LogRecord;
 import com.github.mx.bizlog.context.BizLog;
 import com.github.mx.bizlog.context.LogContext;
+import com.github.mx.bizlog.enums.LogType;
 import com.github.mx.bizlog.extend.LogOperator;
 import com.github.mx.bizlog.extend.LogPersistence;
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
@@ -125,7 +126,7 @@ public class LogInterceptor extends LogValueParser implements InitializingBean, 
                               String errorMsg, LogOps logOps, String action, LocalDateTime startTime, LocalDateTime endTime) {
         String bizId = logOps.getBizId();
         String title = logOps.getTitle();
-        String logType = logOps.getLogType().name();
+        LogType logType = logOps.getLogType();
         String operatorId = logOps.getOperatorId();
         String category = logOps.getCategory();
         String detail = logOps.getDetail();

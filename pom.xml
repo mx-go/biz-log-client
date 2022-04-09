@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <nacos-config-core.version>1.0.3</nacos-config-core.version>
+        <nacos-config-core.version>1.0.4</nacos-config-core.version>
         <lombok.version>1.18.20</lombok.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <fastjson.version>1.2.75</fastjson.version>
