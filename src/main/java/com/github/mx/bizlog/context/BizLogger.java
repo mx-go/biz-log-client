@@ -60,20 +60,30 @@ public class BizLogger {
         log(bizId, LogLevel.ERROR, MessageFormatter.arrayFormat(format, arguments).getMessage());
     }
 
+    /**
+     * 业务异常日志采集
+     *
+     * @param bizId   业务主键
+     * @param level   日志级别
+     * @param message 日志信息
+     */
     private static void log(String bizId, LogLevel level, String message) {
-        StackTraceElement element = new Throwable().getStackTrace()[2];
-        String line = LocalDateTime.now().atZone(ZoneId.systemDefault()) + DELIMITER + level + DELIMITER + "[" + Thread.currentThread().getName() + "]" +
-                DELIMITER + "[" + element.getClassName() + "#" + element.getMethodName() + "]" + "-" + element.getLineNumber() + DELIMITER + message;
-        String hostName = ConfigHelper.getHostName(), serverIp = ConfigHelper.getAppName();
-        Map<String, Object> args = ImmutableMap.of("line", line, "logLevel", level, "hostName", hostName, "serverIp", serverIp);
+        try {
+            StackTraceElement element = new Throwable().getStackTrace()[2];
+            String line = LocalDateTime.now(ZoneId.systemDefault()) + DELIMITER + level + DELIMITER + "[" + Thread.currentThread().getName() + "]" + DELIMITER + "[" + element.getClassName() + "#" + element.getMethodName() + "]" + "-" + element.getLineNumber() + DELIMITER + message;
+            String hostName = ConfigHelper.getHostName(), serverIp = ConfigHelper.getServerIp();
+            Map<String, Object> args = ImmutableMap.of("line", line, "level", level, "hostName", hostName, "serverIp", serverIp);
 
-        LogRecord record = new LogRecord();
-        record.setTitle(TITLE);
-        record.setBizId(bizId);
-        record.setReportType(ReportType.BIZ.getType());
-        record.setLogType(LogType.LOCAL);
-        record.setDetail(message);
-        record.setContent(JSON.toJSONString(args));
-        BizLog.log(record);
+            LogRecord record = new LogRecord();
+            record.setTitle(TITLE);
+            record.setBizId(bizId);
+            record.setReportType(ReportType.BIZ.getType());
+            record.setLogType(LogType.LOCAL);
+            record.setDetail(message);
+            record.setContent(JSON.toJSONString(args));
+            BizLog.log(record);
+        } catch (Exception e) {
+            log.error("report biz log failed. bizId:{}, message:{}", bizId, message);
+        }
     }
 }
