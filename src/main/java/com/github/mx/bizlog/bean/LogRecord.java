@@ -35,7 +35,7 @@ public class LogRecord {
      */
     private String title;
     /**
-     * 上报类型，默认升级日志。不对客户端开放
+     * 上报类型，默认审计日志。不对客户端开放
      *
      * @see com.github.mx.bizlog.enums.ReportType
      */
