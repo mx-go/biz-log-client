@@ -50,7 +50,7 @@ public class LogRecord {
      */
     private String category;
     /**
-     * 业务ID
+     * 业务ID。非空
      */
     private String bizId;
     /**
