@@ -20,37 +20,45 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class DefaultLogPersistence implements LogPersistence, Runnable, AutoCloseable {
 
+    private static final int BATCH_REPORT_SIZE = 100;
     private final ScheduledExecutorService executor;
     private static List<LogRecord> CURRENT = Lists.newCopyOnWriteArrayList();
 
     public DefaultLogPersistence() {
         ThreadFactory tf = new ThreadFactoryBuilder().setNameFormat("biz-log-%d").build();
         executor = Executors.newSingleThreadScheduledExecutor(tf);
-        executor.scheduleAtFixedRate(this, 1000, 500, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(this, 10, 1, TimeUnit.SECONDS);
         Runtime.getRuntime().addShutdownHook(new Thread(executor::shutdown));
     }
 
     @Override
     public void log(LogRecord record) {
-        CURRENT.add(record);
+        this.add(Lists.newArrayList(record));
     }
 
     @Override
-    public void log(Collection<LogRecord> record) {
-        CURRENT.addAll(record);
+    public void log(Collection<LogRecord> records) {
+        this.add(records);
     }
 
     @Override
     public <T, R> void log(String title, T bizId, R content) {
         LogRecord record = new LogRecord(title, String.valueOf(bizId), JSON.toJSONString(content));
-        CURRENT.add(record);
+        this.add(Lists.newArrayList(record));
     }
 
     @Override
     public <T, R> void log(String title, Collection<T> bizIds, R content) {
         List<LogRecord> records = Lists.newArrayListWithCapacity(bizIds.size());
         bizIds.forEach(bizId -> records.add(new LogRecord(title, String.valueOf(bizId), JSON.toJSONString(content))));
+        this.add(records);
+    }
+
+    private void add(Collection<LogRecord> records) {
         CURRENT.addAll(records);
+        if (CURRENT.size() >= BATCH_REPORT_SIZE) {
+            run();
+        }
     }
 
     @Override
@@ -71,8 +79,8 @@ public class DefaultLogPersistence implements LogPersistence, Runnable, AutoClos
             // 具体处理逻辑
             log.info("persist bizLog. {}", records);
         } catch (Exception e) {
-            log.error("");
-            // resend
+            log.error("persist bizLog error.", e);
+            // resend 注意一直失败的话CURRENT会越来越大
             CURRENT.addAll(records);
         }
     }
