@@ -2,6 +2,7 @@ package com.github.mx.bizlog.annotation;
 
 import com.github.mx.bizlog.enums.LogType;
 import com.github.mx.bizlog.extend.defaults.DefaultLogOperator;
+import com.github.mx.bizlog.util.LogHelper;
 
 import java.lang.annotation.*;
 
@@ -44,7 +45,7 @@ public @interface Log {
      * 成功时信息
      * 默认取返回值
      */
-    String success() default "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret)}}";
+    String success() default LogHelper.DEFAULT_SUCCESS_EXPRESSION;
 
     /**
      * 失败时信息
@@ -56,7 +57,7 @@ public @interface Log {
      * 详情
      * 默认为入参
      */
-    String detail() default "{{T(com.alibaba.fastjson.JSON).toJSONString(#_params)}}";
+    String detail() default LogHelper.DEFAULT_DETAIL_EXPRESSION;
 
     /**
      * 操作人

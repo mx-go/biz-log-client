@@ -22,6 +22,11 @@ import java.util.Enumeration;
 @Slf4j
 public class LogHelper {
 
+    public static final String DEFAULT_SUCCESS_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret, new com.github.mx.bizlog.parser.CustomValueFilter())}}";
+    public static final String DEFAULT_DETAIL_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_params, new com.github.mx.bizlog.parser.CustomValueFilter())}}";
+    public static final String CONDITION = "condition";
+    public static final String SUCCESS = "success";
+
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
 
