@@ -24,6 +24,9 @@ public class LogHelper {
 
     public static final String DEFAULT_SUCCESS_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret, new com.github.mx.bizlog.parser.CustomValueFilter())}}";
     public static final String DEFAULT_DETAIL_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_params, new com.github.mx.bizlog.parser.CustomValueFilter())}}";
+    public static final String COMMON_SUCCESS_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_ret)}}";
+    public static final String COMMON_DETAIL_EXPRESSION = "{{T(com.alibaba.fastjson.JSON).toJSONString(#_params)}}";
+
     public static final String CONDITION = "condition";
     public static final String SUCCESS = "success";
 
@@ -157,8 +160,8 @@ public class LogHelper {
     /**
      * 获得当天是周几
      */
-    public static String getWeekDay() {
-        String[] weekDays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    public static int getWeekDay() {
+        int[] weekDays = {7, 1, 2, 3, 4, 5, 6};
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
 
